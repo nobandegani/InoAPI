@@ -5,7 +5,7 @@ import { BuildCustomMaze } from '../lib/maze/node.js';
 const router = express.Router();
 
 // Define the /generate-maze route with input validation and sanitization
-router.get(
+router.post(
     '/generate-maze',
     [
         // Validation and sanitization middlewares
@@ -35,10 +35,10 @@ router.get(
 
         try {
             // Extract and sanitize inputs after validation
-            const width = req.query.width || 10;
-            const height = req.query.height || 10;
-            const algo = req.query.algo || 'recursiveBacktrack';
-            const type = req.query.type || 'json';
+            const width = req.body.width || 10;
+            const height = req.body.height || 10;
+            const algo = req.body.algo || 'recursiveBacktrack';
+            const type = req.body.type || 'json';
 
             // Call BuildCustomMaze with validated and sanitized inputs
             const svgString = BuildCustomMaze(width, height, algo);
