@@ -10,10 +10,13 @@ router.post(
     [
         // Validation and sanitization middlewares
         check('width')
-            .isInt({ min: 10, max: 100 }).withMessage('Width must be an integer between 10 and 100')
+            .isInt({ min: 10, max: 200 }).withMessage('Width must be an integer between 10 and 200')
             .toInt(), // Convert to integer
         check('height')
-            .isInt({ min: 10, max: 100 }).withMessage('Height must be an integer between 10 and 100')
+            .isInt({ min: 10, max: 200 }).withMessage('Height must be an integer between 10 and 200')
+            .toInt(), // Convert to integer
+        check('seed')
+            .isInt().withMessage('seed should be an integer')
             .toInt(), // Convert to integer
         check('algo')
             .optional()
@@ -37,11 +40,12 @@ router.post(
             // Extract and sanitize inputs after validation
             const width = req.body.width || 10;
             const height = req.body.height || 10;
+            const seed = req.body.seed || '';
             const algo = req.body.algo || 'recursiveBacktrack';
             const type = req.body.type || 'json';
 
             // Call BuildCustomMaze with validated and sanitized inputs
-            const svgString = BuildCustomMaze(width, height, algo);
+            const svgString = BuildCustomMaze(width, height, algo, seed);
 
             if (type.toLowerCase() === 'svg') {
                 res.setHeader('Content-Type', 'image/svg+xml');
@@ -53,14 +57,16 @@ router.post(
             const response = {
                 status: 'success',
                 data: {
-                    content: svgString,
                     width: width,
                     height: height,
-                    algo: algo
+                    algo: algo,
+                    seed: seed,
+                    content: svgString,
                 }
             };
 
             res.json(response);
+            console.log("maze generated");
         } catch (error) {
             console.error("Error generating maze:", error);
             next({
